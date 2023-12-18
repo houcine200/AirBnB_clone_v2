@@ -114,32 +114,52 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
-        my_list = args.split(" ")
+        """Create an object of any class with given parameters."""
         if not args:
             print("** class name missing **")
             return
-        elif my_list[0] not in HBNBCommand.classes:
+        args_list = args.split(" ")
+        class_name = args_list[0]
+
+        if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        """Create an object of any class"""
-        
-        if not args:
-            raise SyntaxError()
         
         """ obj = eval("{}()".format(my_list[0])) """
-        new_instance = HBNBCommand.classes[my_list[0]]()
 
-        params = my_list[1:]
-        for attribute in params:
-            attribute_to_clean = attribute.split("=")
-            clean_value = attribute_to_clean[1].replace("_", " ")
-            clean_value = clean_value.replace('"', "")
+        new_instance = HBNBCommand.classes[class_name]()
+
+        params = args_list[1:]
+
+        for param in params:
+            key_value = param.split("=")
+            if len(key_value) != 2:
+                print("** invalid parameter format **")
+                return
+            
+            key, value = key_value
+            key = key.strip()
+            value = value.strip()
+
+            if not key or not value:
+                print("** invalid parameter format **")
+                return
+            
+            if value.startswith('"') and value.endswith('"'):
+                value = value[1:-1]
+                value = value.replace('\\"', '"')
+                value = value.replace('_', ' ')
+
             try:
-                clean_value = eval(clean_value)
-            except Exception:
-                clean_value = attribute_to_clean[1]
-            setattr(new_instance, attribute_to_clean[0], clean_value)
+                if '.' in value:
+                    value = float(value)
+                else:
+                    value = int(value)
+            except ValueError:
+                pass  # If it's not a valid float or int, keep it as a string
+
+            setattr(new_instance, key_value[0], value)
+            
         new_instance.save()
         print("{}".format(new_instance.id))
 
