@@ -9,10 +9,29 @@ from os import getenv
 
 storage_type = getenv("HBNB_TYPE_STORAGE")
 
+place_amenity = Table(
+    "place_amenity",
+    Base.metadata,
+    Column(
+        "place_id",
+        String(60),
+        ForeignKey("places.id"),
+        primary_key=True,
+        nullable=False,
+    ),
+    Column(
+        "amenity_id",
+        String(60),
+        ForeignKey("amenities.id"),
+        primary_key=True,
+        nullable=False,
+    ),
+)
+
 
 class Place(BaseModel, Base):
     """Class representing a place to stay in the HBNB project"""
-
+  
     __tablename__ = "places"
     if storage_type == "db":
         city_id = Column(String(60), ForeignKey("cities.id"), nullable=False)
@@ -25,7 +44,9 @@ class Place(BaseModel, Base):
         price_by_night = Column(Integer, nullable=False, default=0)
         latitude = Column(Float, nullable=True)
         longitude = Column(Float, nullable=True)
-        
+        amenities = relationship("Amenity", secondary=place_amenity,
+                                 viewonly=False,
+                                 back_populates="place_amenities")
         reviews = relationship('Review', cascade="all,delete", backref="place")
 
     else:
@@ -40,5 +61,3 @@ class Place(BaseModel, Base):
         latitude = 0.0
         longitude = 0.0
         amenity_ids = []
-
-       
