@@ -42,20 +42,16 @@ class BaseModel:
         storage.save()
 
     def to_dict(self):
-        """Return a dictionary containing all keys/values of __dict__
-        of the instance and the class name in the key '__class__'
-        and 'created_at' and 'updated_at' as string in ISO format.
-        Exclude the _sa_instance_state key.
-        """
-        result = self.__dict__.copy()
-        result['__class__'] = self.__class__.__name__
-        result['created_at'] = self.created_at.isoformat()
-        result['updated_at'] = self.updated_at.isoformat()
-        
-        # Exclude _sa_instance_state key
-        result.pop('_sa_instance_state', None)
-        
-        return result
+        """Convert instance into dict format"""
+        dictionary = {}
+        dictionary.update(self.__dict__)
+        dictionary.update({'__class__':
+                          (str(type(self)).split('.')[-1]).split('\'')[0]})
+        dictionary['created_at'] = self.created_at.isoformat()
+        dictionary['updated_at'] = self.updated_at.isoformat()
+        if '_sa_instance_state' in dictionary:
+            del dictionary['_sa_instance_state']
+        return dictionary
     
     def delete(self):
         """Deletes the current instance from storage"""
