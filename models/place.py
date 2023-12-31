@@ -30,7 +30,7 @@ place_amenity = Table(
 
 
 class Place(BaseModel, Base):
-    """A place to stay"""
+    """Class representing a place to stay in the HBNB project"""
 
     __tablename__ = "places"
     if storage_type == "db":
