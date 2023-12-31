@@ -10,7 +10,7 @@ storage_type = getenv("HBNB_TYPE_STORAGE")
 
 
 class State(BaseModel, Base):
-    """ State class """
+    """ State class for storing state information """
 
     __tablename__ = 'states'
     if storage_type == "db":
