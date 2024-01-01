@@ -31,7 +31,7 @@ place_amenity = Table(
 
 class Place(BaseModel, Base):
     """Class representing a place to stay in the HBNB project"""
-  
+
     __tablename__ = "places"
     if storage_type == "db":
         city_id = Column(String(60), ForeignKey("cities.id"), nullable=False)

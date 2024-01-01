@@ -7,6 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+
 class BaseModel:
     """A base class for all hbnb models"""
 
@@ -26,7 +27,6 @@ class BaseModel:
                     val = datetime.strptime(val, "%Y-%m-%dT%H:%M:%S.%f")
                 if key != '__class__':
                     setattr(self, key, val)
-
 
     def __str__(self):
         """Returns a string representation of the instance"""
@@ -51,7 +51,7 @@ class BaseModel:
         if '_sa_instance_state' in dictionary:
             del dictionary['_sa_instance_state']
         return dictionary
-    
+
     def delete(self):
         """Deletes the current instance from storage"""
         from models import storage
