@@ -9,7 +9,7 @@ storage_type = getenv("HBNB_TYPE_STORAGE")
 
 
 class Amenity(BaseModel, Base):
-    """ Amenity class for representing an amenity that can be associated with places """
+    """ Amenity class for amenity that can be associated with places """
     __tablename__ = 'amenities'
     if storage_type == 'db':
         name = Column(String(128), nullable=False)
