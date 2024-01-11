@@ -10,3 +10,4 @@ def do_pack():
     local("mkdir -p versions")
     """tar -czvf archive_name.tgz web_static"""
     local(f"tar -cvzf versions/{file_name} {'web_static'}")
+    return f"versions/{file_name} {'web_static'}"
