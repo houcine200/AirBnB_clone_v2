@@ -1,43 +1,50 @@
 #!/usr/bin/python3
+""" module doc
+"""
+from fabric.api import task, local, env, put, run
 from datetime import datetime
-from os import path
-from fabric import local, put, run, env
+import os
 
-env.hosts = ['54.236.231.98', '	54.197.46.38']
+env.hosts = ['18.207.1.87', '52.206.189.175']
 
 
+@task
 def do_pack():
-    """Create a .tgz archive from the contents of web_static folder."""
-    archive_filename = f"web_static_{datetime.now():%Y%m%d%H%M%S}.tgz"
-    archive_path = f"versions/{archive_filename}"
+    """ method doc
+        sudo fab -f 1-pack_web_static.py do_pack
+    """
+    formatted_dt = datetime.now().strftime('%Y%m%d%H%M%S')
+    mkdir = "mkdir -p versions"
+    path = "versions/web_static_{}.tgz".format(formatted_dt)
+    print("Packing web_static to {}".format(path))
+    if local("{} && tar -cvzf {} web_static".format(mkdir, path)).succeeded:
+        return path
+    return None
 
-    local("mkdir -p versions")
-    local(f"tar -cvzf {archive_path} web_static")
-    return archive_path
 
-
+@task
 def do_deploy(archive_path):
-    """Distribute an archive to web servers."""
+    """ method doc
+        fab -f 2-do_deploy_web_static.py do_deploy:
+        archive_path=versions/web_static_20231004201306.tgz
+        -i ~/.ssh/id_rsa -u ubuntu
+    """
     try:
-        if not path.exists(archive_path):
+        if not os.path.exists(archive_path):
             return False
-
+        fn_with_ext = os.path.basename(archive_path)
+        fn_no_ext, ext = os.path.splitext(fn_with_ext)
+        dpath = "/data/web_static/releases/"
         put(archive_path, "/tmp/")
-        archive_filename = archive_path.split("/")[-1].split(".")[0]
-        release_path = f"/data/web_static/releases/{archive_filename}"
-        run(f"mkdir -p {release_path}")
-        run(f"tar -xzf /tmp/{archive_filename}.tgz -C {release_path}\
-            --strip-components=1")
-
-        run(f"rm /tmp/{archive_filename}.tgz")
-
-        current_path = "/data/web_static/current"
-        run(f"rm -f {current_path}")
-        run(f"ln -s {release_path} {current_path}")
-
-        print("Deployment successful!")
+        run("rm -rf {}{}/".format(dpath, fn_no_ext))
+        run("mkdir -p {}{}/".format(dpath, fn_no_ext))
+        run("tar -xzf /tmp/{} -C {}{}/".format(fn_with_ext, dpath, fn_no_ext))
+        run("rm /tmp/{}".format(fn_with_ext))
+        run("mv {0}{1}/web_static/* {0}{1}/".format(dpath, fn_no_ext))
+        run("rm -rf {}{}/web_static".format(dpath, fn_no_ext))
+        run("rm -rf /data/web_static/current")
+        run("ln -s {}{}/ /data/web_static/current".format(dpath, fn_no_ext))
+        print("New version deployed!")
         return True
-
-    except Exception as err:
-        print(err)
+    except Exception:
         return False
