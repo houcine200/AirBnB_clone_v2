@@ -41,7 +41,7 @@ def do_deploy(archive_path):
 
         run("ln -s {} /data/web_static/current".format(folder_name))
 
-        print("Deployment successful!")
+        print("New version deployed!")
         return True
 
     except Exception as err:
