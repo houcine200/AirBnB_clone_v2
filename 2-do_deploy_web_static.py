@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+"""Fabric script that distributes an archive to your web servers"""
+
 from datetime import datetime
 from os import path
 from fabric import local, put, run, env
@@ -23,17 +25,21 @@ def do_deploy(archive_path):
             return False
 
         put(archive_path, "/tmp/")
-        archive_filename = archive_path.split("/")[-1].split(".")[0]
-        release_path = f"/data/web_static/releases/{archive_filename}"
-        run(f"mkdir -p {release_path}")
-        run(f"tar -xzf /tmp/{archive_filename}.tgz -C {release_path}\
-            --strip-components=1")
 
-        run(f"rm /tmp/{archive_filename}.tgz")
+        filename = archive_path.split("/")[-1]
+        folder_name = f"/data/web_static/releases/{filename.split(".")[0]}"
+        run("mkdir -p {}".format(folder_name))
+        run("tar -xzf /tmp/{} -C {}".format(filename, folder_name))
 
-        current_path = "/data/web_static/current"
-        run(f"rm -f {current_path}")
-        run(f"ln -s {release_path} {current_path}")
+        run("rm /tmp/{}".format(filename))
+
+        run("mv {}/web_static/* {}".format(folder_name, folder_name))
+
+        run("rm -rf {}/web_static".format(folder_name))
+
+        run("rm -rf /data/web_static/current")
+
+        run("ln -s {} /data/web_static/current".format(folder_name))
 
         print("Deployment successful!")
         return True
