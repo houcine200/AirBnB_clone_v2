@@ -5,18 +5,8 @@ from datetime import datetime
 from os import path
 from fabric.api import local, put, run, env
 
+
 env.hosts = ['54.236.231.98', '	54.197.46.38']
-
-
-def do_pack():
-    """Create a .tgz archive from the contents of web_static folder."""
-    formatted_date_time = datetime.now().strftime('%Y%m%d%H%M%S')
-    archive_filename = "web_static_{}.tgz".format(formatted_date_time)
-    archive_path = "versions/{}".format(archive_filename)
-
-    local("mkdir -p versions")
-    local("tar -cvzf {} web_static".format(archive_path))
-    return archive_path
 
 
 def do_deploy(archive_path):
