@@ -29,8 +29,12 @@ def do_clean(number):
     """"Delete remote(server) archives."""
     with cd("/data/web_static/releases"):
         remote_archives = run("ls -1").split("\n")
-        remote_archives = [archive.strip('\r') for archive in remote_archives if archive.strip()]
+        remote_archives = [
+            archive.strip('\r')
+            for archive in remote_archives
+            if archive.strip()
+            ]
         remote_archives_to_keep = remote_archives[-number:]
         for archive in remote_archives:
             if archive not in remote_archives_to_keep:
-                run("rm -f /data/web_static/releases/{}".format(archive))
+                run("rm -rf /data/web_static/releases/{}".format(archive))
