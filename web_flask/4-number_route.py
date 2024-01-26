@@ -31,9 +31,8 @@ def python_route(text="is cool"):
     return f"Python {clean_text}"
 
 
-@app.route("/number/<n>", strict_slashes=False)
+@app.route("/number/<int:n>", strict_slashes=False)
 def number_route(n):
-    n = int(n)
     return f"{n} is a number"
 
 
