@@ -18,7 +18,7 @@ def hbnb():
 
 @app.route("/c/<text>", strict_slashes=False)
 def c_route(text):
-    """Displays "C " followed by text."""
+    """Displays 'C ' followed by text."""
     clean_text = text.replace("_", " ")
     return f"C {clean_text}"
 
@@ -26,13 +26,14 @@ def c_route(text):
 @app.route("/python", strict_slashes=False)
 @app.route("/python/<text>", strict_slashes=False)
 def python_route(text="is cool"):
-    """Displays "Python " followed text."""
+    """Displays 'Python ' followed by text."""
     clean_text = text.replace("_", " ")
     return f"Python {clean_text}"
 
 
 @app.route("/number/<int:n>", strict_slashes=False)
 def number_route(n):
+    """Displays 'n is a number' only if n is an integer."""
     return f"{n} is a number"
 
 
