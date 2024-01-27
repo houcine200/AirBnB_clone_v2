@@ -5,6 +5,7 @@ from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 from models.city import City
 from os import getenv
+from models import storage
 
 storage_type = getenv("HBNB_TYPE_STORAGE")
 
@@ -23,7 +24,7 @@ class State(BaseModel, Base):
     def cities(self):
         """Return the list of City objects linked to the current State"""
         cities_list = []
-        for city_obj in models.storage.all(City).values():
+        for city_obj in storage.all(City).values():
             if city_obj.state_id == self.id:
                 cities_list.append(city_obj)
         return cities_list
