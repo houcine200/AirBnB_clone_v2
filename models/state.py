@@ -18,3 +18,12 @@ class State(BaseModel, Base):
         cities = relationship('City', cascade="all,delete", backref="state")
     else:
         name = ""
+
+    @property
+    def cities(self):
+        """Return the list of City objects linked to the current State"""
+        cities_list = []
+        for city_obj in models.storage.all(City).values():
+            if city_obj.state_id == self.id:
+                cities_list.append(city_obj)
+        return cities_list
