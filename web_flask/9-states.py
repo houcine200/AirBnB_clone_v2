@@ -5,25 +5,17 @@ Flask web app to display list of states and cities using SQLAlchemy and Jinja.
 from flask import Flask, render_template
 from models import storage
 from models.state import State
-
 app = Flask(__name__)
 
 
-@app.route("/states", strict_slashes=False)
-def display_states():
-    """Render states html page to display list of States."""
-    states = storage.all(State)
-    return render_template("9-states.html", states=states)
-
-
-@app.route("/states/<id>", strict_slashes=False)
-def display_state_cities(id):
-    """Render state_cities html page to display State and Cities."""
-    state = storage.get(State, id)
-    if state:
-        return render_template("9-states.html", state=state)
-    else:
-        return render_template("9-states.html", not_found=True)
+@app.route('/states', strict_slashes=False)
+@app.route('/states/<state_id>', strict_slashes=False)
+def states(state_id=None):
+    """display the states and cities list ordered by alphabet"""
+    states = storage.all("State")
+    if state_id:
+        state_id = f"State.{state_id}"
+    return render_template('9-states.html', states=states, state_id=state_id)
 
 
 @app.teardown_appcontext
